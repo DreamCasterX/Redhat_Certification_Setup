@@ -158,6 +158,7 @@ else
     systemctl enable --now cockpit.socket || ( echo "Enabling cockpit socket failed" )
     systemctl start cockpit || ( echo "Starting Cockpit failed" )
     
+
   # Disable close lid suspend on Server
   sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/' /etc/systemd/logind.conf && systemctl restart systemd-logind.service
   fi
