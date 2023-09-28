@@ -130,14 +130,14 @@ else
   echo
   KERNEL=$(uname -r)
   case $VERSION in
-    "8.8")
+    "8")
       if [ "$KERNEL" != "4.18.0-477.10.1.el8_8.x86_64" ];
       then 
         yum remove -y kernel kernel-debug kernel-debuginfo
         yum install -y kernel-4.18.0-477.10.1.el8_8 kernel-debug-4.18.0-477.10.1.el8_8 kernel-debuginfo-4.18.0-477.10.1.el8_8 --skip-broken
       fi
       ;;
-    "9.2")
+    "9")
       if [ "$KERNEL" != "5.14.0-284.11.1.el9_2.x86_64" ];
       then 
         yum remove -y kernel kernel-debug kernel-debuginfo
