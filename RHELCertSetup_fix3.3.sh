@@ -20,30 +20,6 @@
 # 3) Ensure the system network connection is enabled in settings
 
 
-# Create keyboard shortcut for Terminal (Run as User)
-gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']" 2> /dev/null
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'terminal' 2> /dev/null
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'gnome-terminal' 2> /dev/null
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '<ctrl><alt>t' 2> /dev/null
-
-
-# Set proxy to automatic (Run as User)
-gsettings set org.gnome.system.proxy mode 'auto' 2> /dev/null
-
-
-# Disable automatic DNS (Run as User)
-NIC=`nmcli -t -f DEVICE c s -a | grep -v 'lo' | grep -v 'wl'`
-nmcli connection modify $NIC ipv4.ignore-auto-dns 'yes'
-
-
-# Disable auto suspend/dim screen/screen blank/auto power-saver (Run as User)
-gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type "nothing" 2> /dev/null
-gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type "nothing" 2> /dev/null
-gsettings set org.gnome.settings-daemon.plugins.power idle-dim "false" 2> /dev/null
-gsettings set org.gnome.desktop.session idle-delay "0" > /dev/null 2> /dev/null
-gsettings set org.gnome.settings-daemon.plugins.power power-saver-profile-on-low-battery "false" 2> /dev/null
-
-
 # Ensure the user is running the script as root
 if [ "$EUID" -ne 0 ]
 then 
@@ -51,15 +27,40 @@ then
 
 else
 
+  # Create keyboard shortcut for Terminal
+  ID=`id -u $USERNAME`
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']" 2> /dev/null
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'terminal' 2> /dev/null
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'gnome-terminal' 2> /dev/null
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '<ctrl><alt>t' 2> /dev/null
+
+
+  # Set proxy to automatic
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.system.proxy mode 'auto' 2> /dev/null
+
+
+  # Disable automatic DNS
+  NIC=`nmcli -t -f DEVICE c s -a | grep -v 'lo' | grep -v 'wl'`
+  nmcli connection modify $NIC ipv4.ignore-auto-dns 'yes'
+
+
+  # Disable auto suspend/dim screen/screen blank/auto power-saver
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type "nothing" 2> /dev/null
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type "nothing" 2> /dev/null
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.power idle-dim "false" 2> /dev/null
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.desktop.session idle-delay "0" > /dev/null 2> /dev/null
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.power power-saver-profile-on-low-battery "false" 2> /dev/null
+
+
   # Ensure Internet is connected
   nslookup "hp.com" > /dev/null
   if [ $? != 0 ]
   then 
-    echo "No Internet connection! Please check your netowrk" && sleep 5 && exit 0
+    echo "No Internet connection! Please check your network" && sleep 5 && exit 0
   fi
 
 
-  # get RHEL version from user
+  # Get RHEL version from user
   echo "What RHEL version are you certifying? (8/9)"
   read -p "RHEL version: " VERSION
   while [[ $VERSION != [89] ]] 
@@ -101,33 +102,32 @@ else
   fi
 
 
-  # Install the certification software/Cockpit on Clinet/Server
-
+  # Install the certification software on Clinet & Server
   subscription-manager attach --auto
-  if [[ "$TYPE" == [Cc] ]]
+  echo
+  echo "------------------------------------"
+  echo "INSTALLING CERTIFICATION SOFTWARE..."
+  echo "------------------------------------"
+  echo
+  yum install -y redhat-certification-hardware || ( echo "Installing hardware test suite package failed!" )
+
+  # Install the Cockpit on Server only
+  if [[ "$TYPE" == [Ss] ]]
   then
     echo
-    echo "-----------------------------------------------"
-    echo "INSTALLING CERTIFICATION SOFTWARE FOR CLIENT..."
-    echo "-----------------------------------------------"
+    echo "-----------------------------------"
+    echo "INSTALLING COCKPIT RPM ON SERVER..."
+    echo "-----------------------------------"
     echo
-    yum install -y redhat-certification-hardware || ( echo "Installing hardware test suite package failed" )
-  else 
-    echo
-    echo "-------------------------------------------------------------"
-    echo "INSTALLING CERTIFICATION SOFTWARE & COCKPIT RPM FOR SERVER..."
-    echo "-------------------------------------------------------------"
-    echo
-    yum install -y redhat-certification-hardware
-    yum install -y yum install -y redhat-certification-cockpit || ( echo "Installing Cockpit RPM failed" )
+    yum install -y redhat-certification-cockpit || ( echo "Installing Cockpit RPM failed!" )
   fi
 
 
   # Install GA kernel 
   echo
-  echo "----------------------------------"
+  echo "---------------------------------"
   echo "ENSURING PROPER KERNEL VERSION..."
-  echo "----------------------------------"
+  echo "---------------------------------"
   echo
   KERNEL=$(uname -r)
   case $VERSION in
@@ -158,7 +158,6 @@ else
     echo
     systemctl enable --now cockpit.socket || ( echo "Enabling cockpit socket failed" )
     systemctl start cockpit || ( echo "Starting Cockpit failed" )
-    
 
   # Disable close lid suspend on Server
   sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/' /etc/systemd/logind.conf && systemctl restart systemd-logind.service
