@@ -71,11 +71,11 @@ else
 
   # Get system type from user
   echo "Are you setting up a client or server ?"
-  read -p "(C)Client  (S)Server: " TYPE
+  read -p "(c)Client  (s)Server: " TYPE
   while [[ "$TYPE" != [CcSs] ]]
   do 
     echo "Please enter a valid response (C or S)"
-    read -p "(C)Client  (S)Server: " TYPE
+    read -p "(c)Client  (s)Server: " TYPE
   done
 
 
@@ -114,10 +114,11 @@ else
     yum install -y redhat-certification-hardware || ( echo "Installing hardware test suite package failed" )
   else 
     echo
-    echo "------------------------------------"
-    echo "INSTALLING COCKPIT RPM FOR SERVER..."
-    echo "------------------------------------"
+    echo "-------------------------------------------------------------"
+    echo "INSTALLING CERTIFICATION SOFTWARE & COCKPIT RPM FOR SERVER..."
+    echo "-------------------------------------------------------------"
     echo
+    yum install -y redhat-certification-hardware
     yum install -y yum install -y redhat-certification-cockpit || ( echo "Installing Cockpit RPM failed" )
   fi
 
