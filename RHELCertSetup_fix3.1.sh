@@ -20,23 +20,23 @@
 # 3) Ensure the system network connection is enabled in settings
 
 
-# Create keyboard shortcut for Terminal
+# Create keyboard shortcut for Terminal (Run as User)
 gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']" 2> /dev/null
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'terminal' 2> /dev/null
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'gnome-terminal' 2> /dev/null
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '<ctrl><alt>t' 2> /dev/null
 
 
-# Set proxy to automatic
+# Set proxy to automatic (Run as User)
 gsettings set org.gnome.system.proxy mode 'auto' 2> /dev/null
 
 
-# Disable automatic DNS
+# Disable automatic DNS (Run as User)
 NIC=`nmcli -t -f DEVICE c s -a | grep -v 'lo' | grep -v 'wl'`
 nmcli connection modify $NIC ipv4.ignore-auto-dns 'yes'
 
 
-# Disable auto suspend/dim screen/screen blank/auto power-saver
+# Disable auto suspend/dim screen/screen blank/auto power-saver (Run as User)
 gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type "nothing" 2> /dev/null
 gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type "nothing" 2> /dev/null
 gsettings set org.gnome.settings-daemon.plugins.power idle-dim "false" 2> /dev/null
