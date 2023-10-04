@@ -1,23 +1,31 @@
 
-#!/bin/bash
+#!/usr/bin/env bash
+
+
+# AUTHOR: mike.lu@hp.com
+# CHANGE DATE: 2023/10/4
+
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
 # Run this script after RHEL boot on both the SUT and HUT
 
 # Prerequisites for both SUT and HUT:
-# 1) Boot the Server being used to run the certification with the GA ISO of the RHEL version to be certified on. During system setup, do the following:
-#    a) Set up an admin account with an easy password
-#         - recommended: Use the same password for all accounts on the SUT and 
-#           HUT
-#         - Allow admin login through SSH (If there is a checkbox for this)
-#         - Ensure kdump is enabled (If there is a setting for this, yes by default)
-#    b) Set up a user account 
-#    c) Ensure The network is connected
-#    d) register the system under a Red Hat admin account 
-#	  - Do this while configuring the system  
-#    e) set the system software to workstation
-# 2) Ensure the Date and Time is set correctly in settings
-# 3) Ensure the system network connection is enabled in settings
+# 1) Boot to USB with GA ISO
+#    a) Set up an admin account (Name: u  Password: u)
+#         - Root account : Allow SSH login
+#         - User account : Enable administrator access
+#         - Ensure kdump is enabled
+#    b) Connect to Internet and register with Red-Hat partner account 
+#    c) Set Software Selection to "Workstation"
+#    d) Set Time Zone to "Asia/Taipei" 
+# 2) Boot to OS 
+#    a) Assign a static IP to HUT & SUT. Make sure you can ping HUT <-> SUT successfully
+
+
+# Copy test result file to USB drive (Run as User)
+XmlLog=`sudo ls -t /var/rhcert/save/*xml | head -1`
+USBDrive=/run/media/$USERNAME/`ls /run/media/$USERNAME`
+[[ -d /var/rhcert/save ]] && sudo cp $XmlLog $USBDrive 2> /dev/null && echo -e '*** Test log has been captured ***\n' 
 
 
 # Ensure the user is running the script as root
