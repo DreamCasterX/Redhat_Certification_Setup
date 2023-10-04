@@ -22,15 +22,14 @@
 #    a) Assign a static IP to HUT & SUT. Make sure you can ping HUT <-> SUT successfully
 
 
-# Copy test result file to USB drive (Run as User)
-XmlLog=`sudo ls -t /var/rhcert/save/*xml | head -1`
-USBDrive=/run/media/$USERNAME/`ls /run/media/$USERNAME`
-[[ -d /var/rhcert/save ]] && sudo cp $XmlLog $USBDrive 2> /dev/null && echo -e '*** Test log has been captured ***\n' 
-
-
 # Ensure the user is running the script as root
 if [ "$EUID" -ne 0 ]
 then 
+ 
+  # Copy test result file to USB drive (Run as User)
+  XmlLog=`sudo ls -t /var/rhcert/save/*xml | head -1`
+  USBDrive=/run/media/$USERNAME/`ls /run/media/$USERNAME`
+  [[ -d /var/rhcert/save ]] && sudo cp $XmlLog $USBDrive 2> /dev/null && echo -e '*** Test log has been captured ***\n' 
   echo "Please run as root (sudo su)."
 
 else
