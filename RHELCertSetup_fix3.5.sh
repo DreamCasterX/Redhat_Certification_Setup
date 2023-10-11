@@ -3,7 +3,7 @@
 
 
 # AUTHOR: mike.lu@hp.com
-# CHANGE DATE: 2023/10/4
+# CHANGE DATE: 2023/10/6
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
@@ -28,8 +28,9 @@ then
  
   # Copy test result file to USB drive (Run as User)
   XmlLog=`sudo ls -t /var/rhcert/save/*xml | head -1`
+  XmlLogName=`sudo ls -t /var/rhcert/save/*xml | head -1 | cut -d "/" -f5`
   USBDrive=/run/media/$USERNAME/`ls /run/media/$USERNAME`
-  [[ -d /var/rhcert/save ]] && sudo cp $XmlLog $USBDrive 2> /dev/null && echo -e '*** Test log has been captured ***\n' 
+  [[ -d /var/rhcert/save ]] && sudo cp $XmlLog $USBDrive 2> /dev/null && echo -e "💾 $XmlLogName has been captured\n"
   echo "Please run as root (sudo su)."
 
 else
@@ -102,10 +103,14 @@ else
     subscription-manager repos --enable=cert-1-for-rhel-8-x86_64-rpms || ( echo "Attaching certification repo failed, please runs script again."; exit $ERRCODE )
     subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-rpms || ( echo "Attaching baseos repo failed, please run script again."; exit $ERRCODE )
     subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-rpms || ( echo "Attaching appstream failed, please run script again."; exit $ERRCODE )
+    subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-debug-rpms || ( echo "Attaching baseos debug repo failed, please run script again."; exit $ERRCODE )
+    subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-debug-rpms || ( echo "Attaching appstream debug failed, please run script again."; exit $ERRCODE )
   else
     subscription-manager repos --enable=cert-1-for-rhel-9-x86_64-rpms || ( echo "Attaching certification repo failed, please run script again."; exit $ERRCODE )
     subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-rpms || ( echo "Attaching baseos repo failed, please run script again."; exit $ERRCODE )
     subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-rpms || ( echo "Attaching appstream repo failed, please run script again."; exit $ERRCODE )
+    subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-debug-rpms || ( echo "Attaching baseos debug repo failed, please run script again."; exit $ERRCODE )
+    subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-debug-rpms || ( echo "Attaching appstream debug repo failed, please run script again."; exit $ERRCODE )
   fi
 
 
@@ -137,6 +142,8 @@ else
   echo "---------------------------------"
   echo
   KERNEL=$(uname -r)
+  DebugInfoURL_9_2=https://shorturl.at/swLRS
+  DebugInfoPath_9_2=/home/$USERNAME/Downloads/kernel-debuginfo-5.14.0-284.11.1.el9_2.x86_64.rpm
   case $VERSION in
     "8")
       if [ "$KERNEL" != "4.18.0-477.10.1.el8_8.x86_64" ];
@@ -153,6 +160,12 @@ else
       fi
       ;;
   esac
+
+
+
+https://access.cdn.redhat.com/content/origin/rpms/kernel-debuginfo/5.14.0/284.11.1.el9_2/fd431d51/kernel-debuginfo-5.14.0-284.11.1.el9_2.x86_64.rpm?user=3241a64d1f51e1a9f3bf50541d292adc&_auth_=1696501668_c17c5fa4bfb7acc1e050399577a4bfe5
+
+
 
 
   # Enable the cockpit.socket on Server
