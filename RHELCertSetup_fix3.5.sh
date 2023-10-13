@@ -2,8 +2,8 @@
 #!/usr/bin/env bash
 
 
-# AUTHOR: mike.lu@hp.com
-# CHANGE DATE: 2023/10/6
+# CREATOR: mike.lu@hp.com
+# CHANGE DATE: 2023/10/13
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
@@ -58,6 +58,10 @@ else
   sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.power idle-dim "false" 2> /dev/null
   sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.desktop.session idle-delay "0" > /dev/null 2> /dev/null
   sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.power power-saver-profile-on-low-battery "false" 2> /dev/null
+
+
+  # Show battery percentage
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.desktop.interface show-battery-percentage "true" 2> /dev/null
 
 
   # Ensure Internet is connected
@@ -160,12 +164,6 @@ else
       fi
       ;;
   esac
-
-
-
-https://access.cdn.redhat.com/content/origin/rpms/kernel-debuginfo/5.14.0/284.11.1.el9_2/fd431d51/kernel-debuginfo-5.14.0-284.11.1.el9_2.x86_64.rpm?user=3241a64d1f51e1a9f3bf50541d292adc&_auth_=1696501668_c17c5fa4bfb7acc1e050399577a4bfe5
-
-
 
 
   # Enable the cockpit.socket on Server
