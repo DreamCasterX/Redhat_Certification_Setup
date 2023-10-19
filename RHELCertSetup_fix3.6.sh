@@ -3,7 +3,7 @@
 
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 2023/10/13
+# CHANGE DATE: 2023/10/19
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
@@ -68,7 +68,7 @@ else
   nslookup "hp.com" > /dev/null
   if [ $? != 0 ]
   then 
-    echo "No Internet connection! Please check your network" && sleep 5 && exit 0
+    echo "❌ No Internet connection! Please check your network" && sleep 5 && exit 0
   fi
 
 
@@ -104,17 +104,17 @@ else
 
   if [ $VERSION == "8" ]
   then
-    subscription-manager repos --enable=cert-1-for-rhel-8-x86_64-rpms || ( echo "Attaching certification repo failed, please runs script again."; exit $ERRCODE )
-    subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-rpms || ( echo "Attaching baseos repo failed, please run script again."; exit $ERRCODE )
-    subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-rpms || ( echo "Attaching appstream failed, please run script again."; exit $ERRCODE )
-    subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-debug-rpms || ( echo "Attaching baseos debug repo failed, please run script again."; exit $ERRCODE )
-    subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-debug-rpms || ( echo "Attaching appstream debug failed, please run script again."; exit $ERRCODE )
+    subscription-manager repos --enable=cert-1-for-rhel-8-x86_64-rpms || ( echo "❌ Attaching certification repo failed, please runs script again."; exit $ERRCODE )
+    subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-rpms || ( echo "❌ Attaching baseos repo failed, please run script again."; exit $ERRCODE )
+    subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-rpms || ( echo "❌ Attaching appstream failed, please run script again."; exit $ERRCODE )
+    subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-debug-rpms || ( echo "❌ Attaching baseos debug repo failed, please run script again."; exit $ERRCODE )
+    subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-debug-rpms || ( echo "❌ Attaching appstream debug failed, please run script again."; exit $ERRCODE )
   else
-    subscription-manager repos --enable=cert-1-for-rhel-9-x86_64-rpms || ( echo "Attaching certification repo failed, please run script again."; exit $ERRCODE )
-    subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-rpms || ( echo "Attaching baseos repo failed, please run script again."; exit $ERRCODE )
-    subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-rpms || ( echo "Attaching appstream repo failed, please run script again."; exit $ERRCODE )
-    subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-debug-rpms || ( echo "Attaching baseos debug repo failed, please run script again."; exit $ERRCODE )
-    subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-debug-rpms || ( echo "Attaching appstream debug repo failed, please run script again."; exit $ERRCODE )
+    subscription-manager repos --enable=cert-1-for-rhel-9-x86_64-rpms || ( echo "❌ Attaching certification repo failed, please run script again."; exit $ERRCODE )
+    subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-rpms || ( echo "❌ Attaching baseos repo failed, please run script again."; exit $ERRCODE )
+    subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-rpms || ( echo "❌ Attaching appstream repo failed, please run script again."; exit $ERRCODE )
+    subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-debug-rpms || ( echo "❌ Attaching baseos debug repo failed, please run script again."; exit $ERRCODE )
+    subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-debug-rpms || ( echo "❌ Attaching appstream debug repo failed, please run script again."; exit $ERRCODE )
   fi
 
 
@@ -125,7 +125,7 @@ else
   echo "INSTALLING CERTIFICATION SOFTWARE..."
   echo "------------------------------------"
   echo
-  yum install -y redhat-certification-hardware || ( echo "Installing hardware test suite package failed!" )
+  yum install -y redhat-certification-hardware || ( echo "❌ Installing hardware test suite package failed!" )
 
   # Install the Cockpit on Server only
   if [[ "$TYPE" == [Ss] ]]
@@ -135,7 +135,7 @@ else
     echo "INSTALLING COCKPIT RPM ON SERVER..."
     echo "-----------------------------------"
     echo
-    yum install -y redhat-certification-cockpit || ( echo "Installing Cockpit RPM failed!" )
+    yum install -y redhat-certification-cockpit || ( echo "❌ Installing Cockpit RPM failed!" )
   fi
 
 
@@ -174,19 +174,28 @@ else
     echo "ENABLING COCKPIT SOCKET..."
     echo "--------------------------"
     echo
-    systemctl enable --now cockpit.socket || ( echo "Enabling cockpit socket failed" )
-    systemctl start cockpit || ( echo "Starting Cockpit failed" )
+    systemctl enable --now cockpit.socket || ( echo "❌ Enabling cockpit socket failed" )
+    systemctl start cockpit || ( echo "❌ Starting Cockpit failed" )
 
   # Disable close lid suspend on Server
   sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/' /etc/systemd/logind.conf && systemctl restart systemd-logind.service
   fi
 
+
+  # Update system but kernel
+    echo
+    echo "------------------------------"
+    echo "UPDATING THE LATEST PACKAGE..."
+    echo "------------------------------"
+    echo
+    dnf update -y --exclude=kernel* || ( echo "❌ Updating system failed" && sleep 5 && exit 0 )
   
   echo
-  echo "----------------------------------"
-  echo "RHEL CERTIFICATION SETUP COMPLETE"
-  echo "----------------------------------"
+  echo "--------------------------------------"
+  echo "✅ RHEL CERTIFICATION SETUP COMPLETED"
+  echo "---------------------------------------"
   echo
+  sleep 5
   reboot now
 
 fi
