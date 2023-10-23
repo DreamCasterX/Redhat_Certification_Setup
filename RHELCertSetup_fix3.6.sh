@@ -48,8 +48,8 @@ else
 
 
   # Disable automatic DNS
-  NIC=`nmcli -t -f DEVICE c s -a | grep -v 'lo' | grep -v 'wl' | grep -v 'virbr0'`
-  nmcli connection modify $NIC ipv4.ignore-auto-dns 'yes'
+  # NIC=`nmcli -t -f DEVICE c s -a | grep -v 'lo' | grep -v 'wl' | grep -v 'virbr0'`
+  # nmcli connection modify $NIC ipv4.ignore-auto-dns 'yes'
 
 
   # Disable auto suspend/dim screen/screen blank/auto power-saver
