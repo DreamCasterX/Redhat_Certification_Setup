@@ -3,7 +3,7 @@
 
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 2023/10/19
+# CHANGE DATE: 2023/11/8
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
@@ -145,22 +145,28 @@ else
   echo "ENSURING PROPER KERNEL VERSION..."
   echo "---------------------------------"
   echo
+  BUILD=$(cat /etc/redhat-release | cut -d ' ' -f6)
   KERNEL=$(uname -r)
   DebugInfoURL_9_2=https://shorturl.at/swLRS
   DebugInfoPath_9_2=/home/$USERNAME/Downloads/kernel-debuginfo-5.14.0-284.11.1.el9_2.x86_64.rpm
   case $VERSION in
     "8")
-      if [ "$KERNEL" != "4.18.0-477.10.1.el8_8.x86_64" ];
+      if [[ "$BUILD" == "8.8" && "$KERNEL" != "4.18.0-477.10.1.el8_8.x86_64" ]];
       then 
         yum remove -y kernel kernel-debug kernel-debuginfo
         yum install -y kernel-4.18.0-477.10.1.el8_8 kernel-debug-4.18.0-477.10.1.el8_8 kernel-debuginfo-4.18.0-477.10.1.el8_8 --skip-broken
       fi
       ;;
     "9")
-      if [ "$KERNEL" != "5.14.0-284.11.1.el9_2.x86_64" ];
+      if [[ "$BUILD" == "9.2" && "$KERNEL" != "5.14.0-284.11.1.el9_2.x86_64" ]];
       then 
         yum remove -y kernel kernel-debug kernel-debuginfo
         yum install -y kernel-5.14.0-284.11.1.el9_2 kernel-debug-5.14.0-284.11.1.el9_2 kernel-debuginfo-5.14.0-284.11.1.el9_2 --skip-broken
+      fi
+      if [[ "$BUILD" == "9.3" && "$KERNEL" != "5.14.0-362.8.1.el9_3.x86_64" ]];
+      then
+        yum remove -y kernel kernel-debug kernel-debuginfo
+        yum install -y kernel-5.14.0-362.8.1.el9_3 kernel-debug-5.14.0-362.8.1.el9_3 kernel-debuginfo-5.14.0-362.8.1.el9_3 --skip-broken
       fi
       ;;
   esac
