@@ -4,6 +4,7 @@
 
 # CREATOR: mike.lu@hp.com
 # CHANGE DATE: 2023/12/26
+__version__="v3.8"
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
@@ -31,7 +32,7 @@ then
   XmlLogName=`sudo ls -t /var/rhcert/save/*xml | head -1 | cut -d "/" -f5`
   USBDrive=/run/media/$USERNAME/`ls /run/media/$USERNAME`
   [[ -d /var/rhcert/save ]] && sudo cp $XmlLog $USBDrive 2> /dev/null && echo -e "💾 $XmlLogName has been captured\n"
-  echo "Please run as root (sudo su) to start the installation."
+  echo "⚠️ Please run as root (sudo su) to start the installation."
 
 else
 
@@ -69,6 +70,31 @@ else
   if [ $? != 0 ]
   then 
     echo "❌ No Internet connection! Please check your network" && sleep 5 && exit 0
+  fi
+
+
+  # Check the latest update
+  release_url=https://api.github.com/repos/DreamCasterX/Redhat_Certification_Setup/releases/latest
+  new_version=$(curl -s "${release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
+  tarball_url="https://github.com/DreamCasterX/Redhat_Certification_Setup/archive/refs/tags/${new_version}.tar.gz"
+  if [[ $new_version != $__version__ ]]
+  then
+    echo -e "⭐️ New version found"
+    sleep 2
+    echo -e "Downloading update..."
+    pushd "$HOME" > /dev/null 2>&1
+    curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".RHELCertSetup.tar.gz" "${tarball_url}"
+    if [[ -e ".RHELCertSetup.tar.gz" ]]
+    then
+	tar -xf .RHELCertSetup.tar.gz -C "$HOME" --strip-components 1 > /dev/null 2>&1
+	[[ $? -ne 0 ]] && echo -e "❌ Error occured while extracting" ; exit 1
+	rm -f .RHELCertSetup.tar.gz
+	popd > /dev/null 2>&1
+	{ sleep 3; clear; banner_small; }
+	echo -e "Successfully updated! Please run RHELCertSetup_${new_version}.sh\n\n" ; exit 1
+    else
+	echo -e "\n❌ Error occured while downloading"; exit 1
+    fi 
   fi
 
 
