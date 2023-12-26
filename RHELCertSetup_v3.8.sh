@@ -3,7 +3,7 @@
 
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 2023/11/8
+# CHANGE DATE: 2023/12/26
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
@@ -31,7 +31,7 @@ then
   XmlLogName=`sudo ls -t /var/rhcert/save/*xml | head -1 | cut -d "/" -f5`
   USBDrive=/run/media/$USERNAME/`ls /run/media/$USERNAME`
   [[ -d /var/rhcert/save ]] && sudo cp $XmlLog $USBDrive 2> /dev/null && echo -e "💾 $XmlLogName has been captured\n"
-  echo "Please run as root (sudo su)."
+  echo "Please run as root (sudo su) to start the installation."
 
 else
 
@@ -47,7 +47,7 @@ else
   sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.system.proxy mode 'auto' 2> /dev/null
 
 
-  # Disable automatic DNS
+  # Disable automatic DNS (Optional)
   # NIC=`nmcli -t -f DEVICE c s -a | grep -v 'lo' | grep -v 'wl' | grep -v 'virbr0'`
   # nmcli connection modify $NIC ipv4.ignore-auto-dns 'yes'
 
@@ -147,14 +147,17 @@ else
   echo
   RELEASE=$(cat /etc/redhat-release | cut -d ' ' -f6)
   KERNEL=$(uname -r)
-  DebugInfoURL_9_2=https://shorturl.at/swLRS
-  DebugInfoPath_9_2=/home/$USERNAME/Downloads/kernel-debuginfo-5.14.0-284.11.1.el9_2.x86_64.rpm
   case $VERSION in
     "8")
       if [[ "$RELEASE" == "8.8" && "$KERNEL" != "4.18.0-477.10.1.el8_8.x86_64" ]];
       then 
         yum remove -y kernel kernel-debug kernel-debuginfo
         yum install -y kernel-4.18.0-477.10.1.el8_8 kernel-debug-4.18.0-477.10.1.el8_8 kernel-debuginfo-4.18.0-477.10.1.el8_8 --skip-broken
+      fi
+      if [[ "$RELEASE" == "8.9" && "$KERNEL" != "4.18.0-513.5.1.el8_9.x86_64" ]];
+      then 
+        yum remove -y kernel kernel-debug kernel-debuginfo
+        yum install -y kernel-4.18.0-513.5.1.el8_9 kernel-debug-4.18.0-513.5.1.el8_9 kernel-debuginfo-4.18.0-513.5.1.el8_9 --skip-broken
       fi
       ;;
     "9")
