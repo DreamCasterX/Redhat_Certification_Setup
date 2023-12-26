@@ -4,7 +4,7 @@
 
 # CREATOR: mike.lu@hp.com
 # CHANGE DATE: 2023/12/26
-__version__=v3.8
+__version__="v3.8"
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
@@ -83,16 +83,16 @@ else
     sleep 2
     echo -e "\nDownloading update..."
     pushd "$PWD" > /dev/null 2>&1
-    curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".RHELCertSetup.tar.gz" "${tarball_url}"
-    if [[ -e ".RHELCertSetup.tar.gz" ]]
+    curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".RHELCertSetupTDC.tar.gz" "${tarball_url}"
+    if [[ -e ".RHELCertSetupTDC.tar.gz" ]]
     then
-	tar -xf .RHELCertSetup.tar.gz -C "$PWD" --strip-components 1 > /dev/null 2>&1
-	rm -f .RHELCertSetup.tar.gz
+	tar -xf .RHELCertSetupTDC.tar.gz -C "$PWD" --strip-components 1 > /dev/null 2>&1
+	rm -f .RHELCertSetupTDC.tar.gz
 	rm -f README.md
 	popd > /dev/null 2>&1
 	sleep 3
-	chmod 777 RHELCertSetup_${new_version}.sh
-	echo -e "Successfully updated! Please run the new version: RHELCertSetup_${new_version}.sh\n\n" ; exit 1
+	chmod 777 RHELCertSetupTDC.sh
+	echo -e "Successfully updated! Please run RHELCertSetupTDC.sh again.\n\n" ; exit 1
     else
 	echo -e "\n❌ Error occured while downloading" ; exit 1
     fi 
