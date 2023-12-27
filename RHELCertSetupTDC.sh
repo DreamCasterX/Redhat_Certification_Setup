@@ -4,7 +4,7 @@
 
 # CREATOR: mike.lu@hp.com
 # CHANGE DATE: 2023/12/27
-__version__="v3.8"
+__version__="v1.0"
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
@@ -74,9 +74,9 @@ else
 
 
   # Check the latest update
-  release_url=http://tinyurl.com/yzxd5v5m
+  release_url=https://api.github.com/repos/DreamCasterX/Redhat_Certification_Setup/releases/latest
   new_version=$(curl -s "${release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
-  tarball_url="http://tinyurl.com/33bde6y4/${new_version}.tar.gz"
+  tarball_url="https://github.com/DreamCasterX/Redhat_Certification_Setup/archive/refs/tags/${new_version}.tar.gz"
   if [[ $new_version != $__version__ ]]
   then
     echo -e "⭐️ New version found!"
