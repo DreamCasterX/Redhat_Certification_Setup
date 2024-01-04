@@ -3,7 +3,7 @@
 
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 2023/12/28
+# CHANGE DATE: 2024/01/04
 __version__="1.1"
 
 
@@ -63,6 +63,11 @@ else
 
   # Show battery percentage
   sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.desktop.interface show-battery-percentage "true" 2> /dev/null
+
+  
+  # Set time zone and reset NTP
+  timedatectl set-timezone Asia/Taipei
+  timedatectl set-ntp 0 && sleep 1 && timedatectl set-ntp 1
 
 
   # Ensure Internet is connected
