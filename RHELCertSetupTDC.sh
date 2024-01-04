@@ -17,8 +17,7 @@ __version__="1.1"
 #         - User account : Enable administrator access
 #         - Ensure kdump is enabled
 #    b) Connect to Internet and register with Red-Hat partner account 
-#    c) Set Software Selection to "Workstation"
-#    d) Set Time Zone to "Asia/Taipei" 
+#    c) Set Software Selection to "Workstation" 
 # 2) Boot to OS 
 #    a) Assign a static IP to HUT & SUT. Make sure you can ping HUT <-> SUT successfully
 

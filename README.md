@@ -19,7 +19,5 @@
 
 + Set Software Selection to "Workstation"
 
-+ Set Time Zone to "Asia/Taipei"
-  
 #####  2).  Boot to OS 
 + Assign a static IP to HUT & SUT. Make sure you can ping HUT <-> SUT successfully
