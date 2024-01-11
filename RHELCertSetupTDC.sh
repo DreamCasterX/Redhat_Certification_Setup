@@ -3,7 +3,7 @@
 
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 2024/01/04
+# CHANGE DATE: 2024/01/11
 __version__="1.1"
 
 
@@ -104,6 +104,15 @@ else
   fi
 
 
+  # Disable OCSP stapling (workaround for not being able to utilize NTP) 
+  cat /var/log/rhsm/rhsm.log | grep "Clock skew detected, please check your system time" > /dev/null
+  if [ $? == 0 ]
+  then 
+    REPOS=$(awk '/^\[/ {gsub(/[\[\]]/, "", $0); printf("--repo %s ", $0)}'  /etc/yum.repos.d/redhat.repo)
+    sudo subscription-manager repo-override --add sslverifystatus:0 $REPOS   # Revert: sudo subscription-manager repo-override --remove-all
+  fi
+  
+  
   # Get RHEL version from user
   echo "What RHEL version are you certifying? (8/9)"
   read -p "RHEL version: " VERSION
@@ -235,6 +244,8 @@ else
   echo "--------------------------------------"
   echo "✅ RHEL CERTIFICATION SETUP COMPLETED"
   echo "---------------------------------------"
+  echo
+  echo "System will automatically reboot after 5 seconds..."
   echo
   sleep 5
   reboot now
