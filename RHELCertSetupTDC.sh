@@ -1,4 +1,3 @@
-
 #!/usr/bin/env bash
 
 
@@ -105,7 +104,7 @@ else
 
 
   # Disable OCSP stapling (workaround for not being able to utilize NTP) 
-  cat /var/log/rhsm/rhsm.log | grep "Clock skew detected, please check your system time" > /dev/null
+  cat /var/log/rhsm/rhsm.log | grep "Clock skew detected" > /dev/null
   if [ $? == 0 ]
   then 
     REPOS=$(awk '/^\[/ {gsub(/[\[\]]/, "", $0); printf("--repo %s ", $0)}'  /etc/yum.repos.d/redhat.repo)
@@ -245,9 +244,10 @@ else
   echo "✅ RHEL CERTIFICATION SETUP COMPLETED"
   echo "---------------------------------------"
   echo
-  echo "System will automatically reboot after 5 seconds..."
+  echo "System will automatically reboot after 8 seconds..."
   echo
-  sleep 5
+  for n in {8..1}s; do printf "\r$n"; sleep 1; done
+  echo
   reboot now
 
 fi
