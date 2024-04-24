@@ -2,8 +2,8 @@
 
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 2024/01/11
-__version__="1.1"
+# CHANGE DATE: 2024/04/24
+__version__="1.2"
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
@@ -165,7 +165,7 @@ else
   echo "INSTALLING CERTIFICATION SOFTWARE..."
   echo "------------------------------------"
   echo
-  yum install -y redhat-certification-hardware || ( echo "❌ Installing hardware test suite package failed!" )
+  yum install -y redhat-certification && yum install -y redhat-certification-hardware --allowerasing || ( echo "❌ Installing hardware test suite package failed!" )
 
   # Install the Cockpit on Server only
   if [[ "$TYPE" == [Ss] ]]
