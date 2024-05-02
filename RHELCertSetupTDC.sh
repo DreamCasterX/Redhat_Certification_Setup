@@ -2,8 +2,8 @@
 
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 2024/04/24
-__version__="1.2"
+# CHANGE DATE: 2024/05/02
+__version__="1.3"
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
@@ -210,6 +210,11 @@ else
       then
         yum remove -y kernel kernel-debug kernel-debuginfo
         yum install -y kernel-5.14.0-362.8.1.el9_3 kernel-debug-5.14.0-362.8.1.el9_3 kernel-debuginfo-5.14.0-362.8.1.el9_3 --skip-broken
+      fi
+      if [[ "$RELEASE" == "9.4" && "$KERNEL" != "5.14.0-427.13.1.el9_4" ]];
+      then
+        yum remove -y kernel kernel-debug kernel-debuginfo
+        yum install -y kernel-5.14.0-427.13.1.el9_4 kernel-debug-5.14.0-427.13.1.el9_4 kernel-debuginfo-5.14.0-427.13.1.el9_4 --skip-broken
       fi
       ;;
   esac
