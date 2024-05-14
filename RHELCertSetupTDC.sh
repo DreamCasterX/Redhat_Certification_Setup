@@ -2,8 +2,8 @@
 
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 2024/05/02
-__version__="1.3"
+# CHANGE DATE: 2024/05/14
+__version__="1.4"
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
@@ -76,7 +76,7 @@ else
   fi
 
 
-  # Check the latest update
+  # Check the latest update of this script
   release_url=https://api.github.com/repos/DreamCasterX/Redhat_Certification_Setup/releases/latest
   new_version=$(curl -s "${release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
   release_note=$(curl -s "${release_url}" | grep '"body":' | awk -F\" '{print $4}')
@@ -165,7 +165,7 @@ else
   echo "INSTALLING CERTIFICATION SOFTWARE..."
   echo "------------------------------------"
   echo
-  yum install -y redhat-certification && yum install -y redhat-certification-hardware --allowerasing || ( echo "❌ Installing hardware test suite package failed!" )
+  dnf install -y redhat-certification && dnf install -y redhat-certification-hardware --allowerasing || ( echo "❌ Installing hardware test suite package failed!" )
 
   # Install the Cockpit on Server only
   if [[ "$TYPE" == [Ss] ]]
@@ -175,7 +175,7 @@ else
     echo "INSTALLING COCKPIT RPM ON SERVER..."
     echo "-----------------------------------"
     echo
-    yum install -y redhat-certification-cockpit || ( echo "❌ Installing Cockpit RPM failed!" )
+    dnf install -y redhat-certification-cockpit || ( echo "❌ Installing Cockpit RPM failed!" )
   fi
 
 
@@ -189,32 +189,32 @@ else
   KERNEL=$(uname -r)
   case $VERSION in
     "8")
-      if [[ "$RELEASE" == "8.8" && "$KERNEL" != "4.18.0-477.10.1.el8_8.x86_64" ]];
+      if [[ "$RELEASE" == "8.8" && "$KERNEL" != "4.18.0-477.10.1.el8_8.x86_64" ]]
       then 
-        yum remove -y kernel kernel-debug kernel-debuginfo
-        yum install -y kernel-4.18.0-477.10.1.el8_8 kernel-debug-4.18.0-477.10.1.el8_8 kernel-debuginfo-4.18.0-477.10.1.el8_8 --skip-broken
+        dnf remove -y kernel kernel-debug kernel-debuginfo
+        dnf install -y kernel-4.18.0-477.10.1.el8_8 kernel-debug-4.18.0-477.10.1.el8_8 kernel-debuginfo-4.18.0-477.10.1.el8_8 --skip-broken
       fi
-      if [[ "$RELEASE" == "8.9" && "$KERNEL" != "4.18.0-513.5.1.el8_9.x86_64" ]];
+      if [[ "$RELEASE" == "8.9" && "$KERNEL" != "4.18.0-513.5.1.el8_9.x86_64" ]]
       then 
-        yum remove -y kernel kernel-debug kernel-debuginfo
-        yum install -y kernel-4.18.0-513.5.1.el8_9 kernel-debug-4.18.0-513.5.1.el8_9 kernel-debuginfo-4.18.0-513.5.1.el8_9 --skip-broken
+        dnf remove -y kernel kernel-debug kernel-debuginfo
+        dnf install -y kernel-4.18.0-513.5.1.el8_9 kernel-debug-4.18.0-513.5.1.el8_9 kernel-debuginfo-4.18.0-513.5.1.el8_9 --skip-broken
       fi
       ;;
     "9")
-      if [[ "$RELEASE" == "9.2" && "$KERNEL" != "5.14.0-284.11.1.el9_2.x86_64" ]];
+      if [[ "$RELEASE" == "9.2" && "$KERNEL" != "5.14.0-284.11.1.el9_2.x86_64" ]]
       then 
-        yum remove -y kernel kernel-debug kernel-debuginfo
-        yum install -y kernel-5.14.0-284.11.1.el9_2 kernel-debug-5.14.0-284.11.1.el9_2 kernel-debuginfo-5.14.0-284.11.1.el9_2 --skip-broken
+        dnf remove -y kernel kernel-debug kernel-debuginfo
+        dnf install -y kernel-5.14.0-284.11.1.el9_2 kernel-debug-5.14.0-284.11.1.el9_2 kernel-debuginfo-5.14.0-284.11.1.el9_2 --skip-broken
       fi
-      if [[ "$RELEASE" == "9.3" && "$KERNEL" != "5.14.0-362.8.1.el9_3.x86_64" ]];
+      if [[ "$RELEASE" == "9.3" && "$KERNEL" != "5.14.0-362.8.1.el9_3.x86_64" ]]
       then
-        yum remove -y kernel kernel-debug kernel-debuginfo
-        yum install -y kernel-5.14.0-362.8.1.el9_3 kernel-debug-5.14.0-362.8.1.el9_3 kernel-debuginfo-5.14.0-362.8.1.el9_3 --skip-broken
+        dnf remove -y kernel kernel-debug kernel-debuginfo
+        dnf install -y kernel-5.14.0-362.8.1.el9_3 kernel-debug-5.14.0-362.8.1.el9_3 kernel-debuginfo-5.14.0-362.8.1.el9_3 --skip-broken
       fi
-      if [[ "$RELEASE" == "9.4" && "$KERNEL" != "5.14.0-427.13.1.el9_4" ]];
+      if [[ "$RELEASE" == "9.4" && "$KERNEL" != "5.14.0-427.13.1.el9_4.x86_64" ]]
       then
-        yum remove -y kernel kernel-debug kernel-debuginfo
-        yum install -y kernel-5.14.0-427.13.1.el9_4 kernel-debug-5.14.0-427.13.1.el9_4 kernel-debuginfo-5.14.0-427.13.1.el9_4 --skip-broken
+        dnf remove -y kernel kernel-debug kernel-debuginfo
+        dnf install -y kernel-5.14.0-427.13.1.el9_4 kernel-debug-5.14.0-427.13.1.el9_4 kernel-debuginfo-5.14.0-427.13.1.el9_4 --skip-broken
       fi
       ;;
   esac
@@ -236,13 +236,19 @@ else
   fi
 
 
-  # Update system but kernel
-    echo
-    echo "------------------------------"
-    echo "UPDATING THE LATEST PACKAGE..."
-    echo "------------------------------"
-    echo
-    dnf update -y --exclude=kernel* || ( echo "❌ Updating system failed" && sleep 5 && exit 0 )
+  # Update system except for the kernel
+  echo
+  echo "------------------------------"
+  echo "UPDATING THE LATEST PACKAGE..."
+  echo "------------------------------"
+  echo
+  dnf update -y --exclude=kernel* || ( echo "❌ Updating system failed" && sleep 5 && exit 0 )
+  
+  
+  # Disable automatic software updates
+  systemctl stop packagekit
+  systemctl mask packagekit
+  
   
   echo
   echo "--------------------------------------"
