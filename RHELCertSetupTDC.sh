@@ -95,7 +95,7 @@ else
 	rm -f README.md
 	popd > /dev/null 2>&1
 	sleep 3
-	chmod 777 RHELCertSetupTDC.sh
+	sudo chmod 755 RHELCertSetupTDC.sh
 	echo -e "Successfully updated! Please run RHELCertSetupTDC.sh again.\n\n" ; exit 1
     else
 	echo -e "\n❌ Error occured while downloading" ; exit 1
