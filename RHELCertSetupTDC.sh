@@ -2,8 +2,8 @@
 
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 2024/05/14
-__version__="1.4"
+# CHANGE DATE: 2024/05/24
+__version__="1.5"
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
@@ -198,6 +198,11 @@ else
       then 
         dnf remove -y kernel kernel-debug kernel-debuginfo
         dnf install -y kernel-4.18.0-513.5.1.el8_9 kernel-debug-4.18.0-513.5.1.el8_9 kernel-debuginfo-4.18.0-513.5.1.el8_9 --skip-broken
+      fi
+	  if [[ "$RELEASE" == "8.10" && "$KERNEL" != "4.18.0-553.el8_10.x86_64" ]]
+      then 
+        dnf remove -y kernel kernel-debug kernel-debuginfo
+        dnf install -y kernel-4.18.0-553.el8_10 kernel-debug-4.18.0-553.el8_10 kernel-debuginfo-4.18.0-553.el8_10 --skip-broken
       fi
       ;;
     "9")
