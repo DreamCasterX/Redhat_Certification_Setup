@@ -1,8 +1,8 @@
 ## Red Hat Enterprise Linux Hardware Certification Test Environment Setup Tool
 
 #### [Release Note]
-1.	Customized for HP TDC QA team, including Terminal hotkey/disable auto-suspend/collect test log..,etc
-2.	Support RHEL 8.9 & 9.3
+1.	Customized for HP TDC QA team, including hotkey/disable auto-suspend/collect test log..,etc
+2.	Support RHEL 8.x & 9.x
 3.	Auto update new versions from the remote repository
 
 
@@ -20,4 +20,4 @@
 + Set Software Selection to "Workstation"
 
 #####  2).  Boot to OS 
-+ Assign a static IP to HUT & SUT. Make sure you can ping HUT <-> SUT successfully
++ Assign IPs to HUT & SUT. Make sure you can ping HUT <-> SUT successfully
