@@ -2,7 +2,7 @@
 
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 2024/05/24
+# CHANGE DATE: 2024/05/31
 __version__="1.5"
 
 
@@ -22,8 +22,7 @@ __version__="1.5"
 
 
 # Ensure the user is running the script as root
-if [ "$EUID" -ne 0 ]
-then 
+if [ "$EUID" -ne 0 ]; then 
  
   # Copy test result file to USB drive (Run as User)
   XmlLog=`sudo ls -t /var/rhcert/save/*xml | head -1`
@@ -34,12 +33,24 @@ then
 
 else
 
-  # Create keyboard shortcut for Terminal
+  # Customize keyboard shortcut
   ID=`id -u $USERNAME`
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']" 2> /dev/null
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'terminal' 2> /dev/null
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'gnome-terminal' 2> /dev/null
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '<ctrl><alt>t' 2> /dev/null
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/']"
+  
+  # Open Terminal (Ctrl+Alt+T)
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'Terminal' 
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'gnome-terminal' 
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '<ctrl><alt>t' 
+
+  # Open Current folder (Win+E)
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ name 'Current folder' 
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ command 'nautilus .' 
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ binding '<super>e' 
+  
+  # Open Settings (Win+I)
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ name 'Settings' 
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ command 'gnome-control-center' 
+  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ binding '<super>i'
 
 
   # Set proxy to automatic
@@ -70,8 +81,7 @@ else
 
   # Ensure Internet is connected
   nslookup "hp.com" > /dev/null
-  if [ $? != 0 ]
-  then 
+  if [ $? != 0 ]; then 
     echo "❌ No Internet connection! Please check your network" && sleep 5 && exit 0
   fi
 
@@ -81,15 +91,13 @@ else
   new_version=$(curl -s "${release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
   release_note=$(curl -s "${release_url}" | grep '"body":' | awk -F\" '{print $4}')
   tarball_url="https://github.com/DreamCasterX/Redhat_Certification_Setup/archive/refs/tags/${new_version}.tar.gz"
-  if [[ $new_version != $__version__ ]]
-  then
+  if [[ $new_version != $__version__ ]]; then
     echo -e "⭐️ New version found!\n\nVersion: $new_version\nRelease note:\n$release_note"
     sleep 2
     echo -e "\nDownloading update..."
     pushd "$PWD" > /dev/null 2>&1
     curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".RHELCertSetupTDC.tar.gz" "${tarball_url}"
-    if [[ -e ".RHELCertSetupTDC.tar.gz" ]]
-    then
+    if [[ -e ".RHELCertSetupTDC.tar.gz" ]]; then
 	tar -xf .RHELCertSetupTDC.tar.gz -C "$PWD" --strip-components 1 > /dev/null 2>&1
 	rm -f .RHELCertSetupTDC.tar.gz
 	rm -f README.md
@@ -105,8 +113,7 @@ else
 
   # Disable OCSP stapling (workaround for not being able to utilize NTP) 
   cat /var/log/rhsm/rhsm.log | grep "Clock skew detected" > /dev/null
-  if [ $? == 0 ]
-  then 
+  if [ $? == 0 ]; then 
     REPOS=$(awk '/^\[/ {gsub(/[\[\]]/, "", $0); printf("--repo %s ", $0)}'  /etc/yum.repos.d/redhat.repo)
     sudo subscription-manager repo-override --add sslverifystatus:0 $REPOS   # Revert: sudo subscription-manager repo-override --remove-all
   fi
@@ -142,8 +149,7 @@ else
   POOL_ID=`subscription-manager list --available | sed -n '{/500 Nodes/, /Subscription Name/ p}' | head -n -1 | grep "Pool ID:" | rev | cut -d ' ' -f1 | rev`
   subscription-manager attach --pool=$POOL_ID
 
-  if [ $VERSION == "8" ]
-  then
+  if [ $VERSION == "8" ]; then
     subscription-manager repos --enable=cert-1-for-rhel-8-x86_64-rpms || ( echo "❌ Attaching certification repo failed, please runs script again."; exit $ERRCODE )
     subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-rpms || ( echo "❌ Attaching baseos repo failed, please run script again."; exit $ERRCODE )
     subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-rpms || ( echo "❌ Attaching appstream failed, please run script again."; exit $ERRCODE )
@@ -168,8 +174,7 @@ else
   dnf install -y redhat-certification && dnf install -y redhat-certification-hardware --allowerasing || ( echo "❌ Installing hardware test suite package failed!" )
 
   # Install the Cockpit on Server only
-  if [[ "$TYPE" == [Ss] ]]
-  then
+  if [[ "$TYPE" == [Ss] ]]; then
     echo
     echo "-----------------------------------"
     echo "INSTALLING COCKPIT RPM ON SERVER..."
@@ -189,35 +194,29 @@ else
   KERNEL=$(uname -r)
   case $VERSION in
     "8")
-      if [[ "$RELEASE" == "8.8" && "$KERNEL" != "4.18.0-477.10.1.el8_8.x86_64" ]]
-      then 
+      if [[ "$RELEASE" == "8.8" && "$KERNEL" != "4.18.0-477.10.1.el8_8.x86_64" ]]; then 
         dnf remove -y kernel kernel-debug kernel-debuginfo
         dnf install -y kernel-4.18.0-477.10.1.el8_8 kernel-debug-4.18.0-477.10.1.el8_8 kernel-debuginfo-4.18.0-477.10.1.el8_8 --skip-broken
       fi
-      if [[ "$RELEASE" == "8.9" && "$KERNEL" != "4.18.0-513.5.1.el8_9.x86_64" ]]
-      then 
+      if [[ "$RELEASE" == "8.9" && "$KERNEL" != "4.18.0-513.5.1.el8_9.x86_64" ]]; then 
         dnf remove -y kernel kernel-debug kernel-debuginfo
         dnf install -y kernel-4.18.0-513.5.1.el8_9 kernel-debug-4.18.0-513.5.1.el8_9 kernel-debuginfo-4.18.0-513.5.1.el8_9 --skip-broken
       fi
-	  if [[ "$RELEASE" == "8.10" && "$KERNEL" != "4.18.0-553.el8_10.x86_64" ]]
-      then 
+	  if [[ "$RELEASE" == "8.10" && "$KERNEL" != "4.18.0-553.el8_10.x86_64" ]]; then 
         dnf remove -y kernel kernel-debug kernel-debuginfo
         dnf install -y kernel-4.18.0-553.el8_10 kernel-debug-4.18.0-553.el8_10 kernel-debuginfo-4.18.0-553.el8_10 --skip-broken
       fi
       ;;
     "9")
-      if [[ "$RELEASE" == "9.2" && "$KERNEL" != "5.14.0-284.11.1.el9_2.x86_64" ]]
-      then 
+      if [[ "$RELEASE" == "9.2" && "$KERNEL" != "5.14.0-284.11.1.el9_2.x86_64" ]]; then 
         dnf remove -y kernel kernel-debug kernel-debuginfo
         dnf install -y kernel-5.14.0-284.11.1.el9_2 kernel-debug-5.14.0-284.11.1.el9_2 kernel-debuginfo-5.14.0-284.11.1.el9_2 --skip-broken
       fi
-      if [[ "$RELEASE" == "9.3" && "$KERNEL" != "5.14.0-362.8.1.el9_3.x86_64" ]]
-      then
+      if [[ "$RELEASE" == "9.3" && "$KERNEL" != "5.14.0-362.8.1.el9_3.x86_64" ]]; then
         dnf remove -y kernel kernel-debug kernel-debuginfo
         dnf install -y kernel-5.14.0-362.8.1.el9_3 kernel-debug-5.14.0-362.8.1.el9_3 kernel-debuginfo-5.14.0-362.8.1.el9_3 --skip-broken
       fi
-      if [[ "$RELEASE" == "9.4" && "$KERNEL" != "5.14.0-427.13.1.el9_4.x86_64" ]]
-      then
+      if [[ "$RELEASE" == "9.4" && "$KERNEL" != "5.14.0-427.13.1.el9_4.x86_64" ]]; then
         dnf remove -y kernel kernel-debug kernel-debuginfo
         dnf install -y kernel-5.14.0-427.13.1.el9_4 kernel-debug-5.14.0-427.13.1.el9_4 kernel-debuginfo-5.14.0-427.13.1.el9_4 --skip-broken
       fi
@@ -226,8 +225,7 @@ else
 
 
   # Enable the cockpit.socket on Server
-  if [[ "$TYPE" == [Ss] ]]
-  then
+  if [[ "$TYPE" == [Ss] ]]; then
     echo
     echo "--------------------------"
     echo "ENABLING COCKPIT SOCKET..."
