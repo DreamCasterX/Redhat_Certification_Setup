@@ -23,242 +23,240 @@ __version__="1.5"
 
 # Ensure the user is running the script as root
 if [ "$EUID" -ne 0 ]; then 
- 
-  # Copy test result file to USB drive (Run as User)
-  XmlLog=`sudo ls -t /var/rhcert/save/*xml | head -1`
-  XmlLogName=`sudo ls -t /var/rhcert/save/*xml | head -1 | cut -d "/" -f5`
-  USBDrive=/run/media/$USERNAME/`ls /run/media/$USERNAME`
-  [[ -d /var/rhcert/save ]] && sudo cp $XmlLog $USBDrive 2> /dev/null && echo -e "💾 $XmlLogName has been captured\n"
-  echo "⚠️ Please run as root (sudo su) to start the installation."
 
+    # Copy test result file to USB drive (Run as User)
+    XmlLog=`sudo ls -t /var/rhcert/save/*xml | head -1`
+    XmlLogName=`sudo ls -t /var/rhcert/save/*xml | head -1 | cut -d "/" -f5`
+    USBDrive=/run/media/$USERNAME/`ls /run/media/$USERNAME`
+    [[ -d /var/rhcert/save ]] && sudo cp $XmlLog $USBDrive 2> /dev/null && echo -e "💾 $XmlLogName has been captured\n"
+    echo "⚠️ Please run as root (sudo su) to start the installation."
 else
 
-  # Customize keyboard shortcut
-  ID=`id -u $USERNAME`
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/']"
+    # Customize keyboard shortcut
+    ID=`id -u $USERNAME`
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/']"
   
-  # Open Terminal (Ctrl+Alt+T)
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'Terminal' 
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'gnome-terminal' 
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '<ctrl><alt>t' 
+    # Open Terminal (Ctrl+Alt+T)
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name 'Terminal' 
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command 'gnome-terminal' 
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding '<ctrl><alt>t' 
 
   # Open Current folder (Super+E)
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ name 'Current folder' 
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ command 'nautilus .' 
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ binding '<super>e' 
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ name 'Current folder' 
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ command 'nautilus .' 
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/ binding '<super>e' 
   
   # Open Settings (Super+I)
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ name 'Settings' 
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ command 'gnome-control-center' 
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ binding '<super>i'
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ name 'Settings' 
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ command 'gnome-control-center' 
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/ binding '<super>i'
 
 
-  # Set proxy to automatic
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.system.proxy mode 'auto' 2> /dev/null
+    # Set proxy to automatic
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.system.proxy mode 'auto' 2> /dev/null
 
 
-  # Disable automatic DNS (Optional)
-  # NIC=`nmcli -t -f DEVICE c s -a | grep -v 'lo' | grep -v 'wl' | grep -v 'virbr0'`
-  # nmcli connection modify $NIC ipv4.ignore-auto-dns 'yes'
+    # Disable automatic DNS (Optional)
+    # NIC=`nmcli -t -f DEVICE c s -a | grep -v 'lo' | grep -v 'wl' | grep -v 'virbr0'`
+    # nmcli connection modify $NIC ipv4.ignore-auto-dns 'yes'
 
 
-  # Disable auto suspend/dim screen/screen blank/auto power-saver
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type "nothing" 2> /dev/null
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type "nothing" 2> /dev/null
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.power idle-dim "false" 2> /dev/null
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.desktop.session idle-delay "0" > /dev/null 2> /dev/null
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.power power-saver-profile-on-low-battery "false" 2> /dev/null
+    # Disable auto suspend/dim screen/screen blank/auto power-saver
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type "nothing" 2> /dev/null
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type "nothing" 2> /dev/null
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.power idle-dim "false" 2> /dev/null
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.desktop.session idle-delay "0" > /dev/null 2> /dev/null
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.power power-saver-profile-on-low-battery "false" 2> /dev/null
 
 
-  # Show battery percentage
-  sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.desktop.interface show-battery-percentage "true" 2> /dev/null
+    # Show battery percentage
+    sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.desktop.interface show-battery-percentage "true" 2> /dev/null
 
   
-  # Set time zone and reset NTP
-  timedatectl set-timezone Asia/Taipei
-  timedatectl set-ntp 0 && sleep 1 && timedatectl set-ntp 1
+    # Set time zone and reset NTP
+    timedatectl set-timezone Asia/Taipei
+    timedatectl set-ntp 0 && sleep 1 && timedatectl set-ntp 1
 
 
-  # Ensure Internet is connected
-  nslookup "hp.com" > /dev/null
-  if [ $? != 0 ]; then 
-    echo "❌ No Internet connection! Please check your network" && sleep 5 && exit 0
-  fi
+    # Ensure Internet is connected
+    nslookup "hp.com" > /dev/null
+    if [ $? != 0 ]; then 
+        echo "❌ No Internet connection! Please check your network" && sleep 5 && exit 0
+    fi
 
 
-  # Check the latest update of this script
-  release_url=https://api.github.com/repos/DreamCasterX/Redhat_Certification_Setup/releases/latest
-  new_version=$(curl -s "${release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
-  release_note=$(curl -s "${release_url}" | grep '"body":' | awk -F\" '{print $4}')
-  tarball_url="https://github.com/DreamCasterX/Redhat_Certification_Setup/archive/refs/tags/${new_version}.tar.gz"
-  if [[ $new_version != $__version__ ]]; then
-    echo -e "⭐️ New version found!\n\nVersion: $new_version\nRelease note:\n$release_note"
-    sleep 2
-    echo -e "\nDownloading update..."
-    pushd "$PWD" > /dev/null 2>&1
-    curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".RHELCertSetupTDC.tar.gz" "${tarball_url}"
-    if [[ -e ".RHELCertSetupTDC.tar.gz" ]]; then
-	tar -xf .RHELCertSetupTDC.tar.gz -C "$PWD" --strip-components 1 > /dev/null 2>&1
-	rm -f .RHELCertSetupTDC.tar.gz
-	rm -f README.md
-	popd > /dev/null 2>&1
-	sleep 3
-	sudo chmod 755 RHELCertSetupTDC.sh
-	echo -e "Successfully updated! Please run RHELCertSetupTDC.sh again.\n\n" ; exit 1
-    else
-	echo -e "\n❌ Error occured while downloading" ; exit 1
-    fi 
-  fi
+    # Check the latest update of this script
+    release_url=https://api.github.com/repos/DreamCasterX/Redhat_Certification_Setup/releases/latest
+    new_version=$(curl -s "${release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
+    release_note=$(curl -s "${release_url}" | grep '"body":' | awk -F\" '{print $4}')
+    tarball_url="https://github.com/DreamCasterX/Redhat_Certification_Setup/archive/refs/tags/${new_version}.tar.gz"
+    if [[ $new_version != $__version__ ]]; then
+        echo -e "⭐️ New version found!\n\nVersion: $new_version\nRelease note:\n$release_note"
+        sleep 2
+        echo -e "\nDownloading update..."
+        pushd "$PWD" > /dev/null 2>&1
+        curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".RHELCertSetupTDC.tar.gz" "${tarball_url}"
+        if [[ -e ".RHELCertSetupTDC.tar.gz" ]]; then
+	        tar -xf .RHELCertSetupTDC.tar.gz -C "$PWD" --strip-components 1 > /dev/null 2>&1
+	        rm -f .RHELCertSetupTDC.tar.gz
+            rm -f README.md
+            popd > /dev/null 2>&1
+            sleep 3
+            sudo chmod 755 RHELCertSetupTDC.sh
+            echo -e "Successfully updated! Please run RHELCertSetupTDC.sh again.\n\n" ; exit 1
+        else
+            echo -e "\n❌ Error occured while downloading" ; exit 1
+        fi 
+    fi
 
 
-  # Disable OCSP stapling (workaround for not being able to utilize NTP) 
-  cat /var/log/rhsm/rhsm.log | grep "Clock skew detected" > /dev/null
-  if [ $? == 0 ]; then 
-    REPOS=$(awk '/^\[/ {gsub(/[\[\]]/, "", $0); printf("--repo %s ", $0)}'  /etc/yum.repos.d/redhat.repo)
-    sudo subscription-manager repo-override --add sslverifystatus:0 $REPOS   # Revert: sudo subscription-manager repo-override --remove-all
-  fi
+    # Disable OCSP stapling (workaround for not being able to utilize NTP) 
+    cat /var/log/rhsm/rhsm.log | grep "Clock skew detected" > /dev/null
+    if [ $? == 0 ]; then 
+        REPOS=$(awk '/^\[/ {gsub(/[\[\]]/, "", $0); printf("--repo %s ", $0)}'  /etc/yum.repos.d/redhat.repo)
+        sudo subscription-manager repo-override --add sslverifystatus:0 $REPOS   # Revert: sudo subscription-manager repo-override --remove-all
+    fi
   
   
-  # Get RHEL version
-  VERSION=`cat /etc/os-release | grep ^VERSION_ID= | awk -F= '{print $2}' | cut -d '"' -f2 | cut -d '.' -f1`
-  echo "╭─────────────────────────────────────────────────────────╮"
-  echo "│    RHEL $VERSION System Certification Test Environment Setup   │"
-  echo "╰─────────────────────────────────────────────────────────╯"
-  # Get system type from user
-  echo "Are you setting up a client or server?"
-  read -p "(c)Client  (s)Server: " TYPE
-  while [[ "$TYPE" != [CcSs] ]]
-  do 
-    echo "Please enter a valid response (C or S)"
+    # Get RHEL version
+    VERSION=`cat /etc/os-release | grep ^VERSION_ID= | awk -F= '{print $2}' | cut -d '"' -f2 | cut -d '.' -f1`
+    echo "╭─────────────────────────────────────────────────────────╮"
+    echo "│    RHEL $VERSION System Certification Test Environment Setup   │"
+    echo "╰─────────────────────────────────────────────────────────╯"
+    # Get system type from user
+    echo "Are you setting up a client or server?"
     read -p "(c)Client  (s)Server: " TYPE
-  done
+    while [[ "$TYPE" != [CcSs] ]]
+    do 
+      echo "Please enter a valid response (C or S)"
+      read -p "(c)Client  (s)Server: " TYPE
+    done
 
 
-  # Attach the Red Hat Enterprise Linux Self-Serve Subscription
-  echo
-  echo "--------------------------------------"
-  echo "ATTACHING CORRECT RHEL SUBSCRIPTION..."
-  echo "--------------------------------------"
-  echo
-  # Get Pool ID
-  POOL_ID=`subscription-manager list --available | sed -n '{/500 Nodes/, /Subscription Name/ p}' | head -n -1 | grep "Pool ID:" | rev | cut -d ' ' -f1 | rev`
+    # Attach the Red Hat Enterprise Linux Self-Serve Subscription
+    echo
+    echo "--------------------------------------"
+    echo "ATTACHING CORRECT RHEL SUBSCRIPTION..."
+    echo "--------------------------------------"
+    echo
+    # Get Pool ID
+    POOL_ID=`subscription-manager list --available | sed -n '{/500 Nodes/, /Subscription Name/ p}' | head -n -1 | grep "Pool ID:" | rev | cut -d ' ' -f1 | rev`
   subscription-manager attach --pool=$POOL_ID
 
-  if [ $VERSION == "8" ]; then
-    subscription-manager repos --enable=cert-1-for-rhel-8-x86_64-rpms || ( echo "❌ Attaching certification repo failed, please runs script again."; exit $ERRCODE )
-    subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-rpms || ( echo "❌ Attaching baseos repo failed, please run script again."; exit $ERRCODE )
-    subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-rpms || ( echo "❌ Attaching appstream failed, please run script again."; exit $ERRCODE )
-    subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-debug-rpms || ( echo "❌ Attaching baseos debug repo failed, please run script again."; exit $ERRCODE )
-    subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-debug-rpms || ( echo "❌ Attaching appstream debug failed, please run script again."; exit $ERRCODE )
-  else
-    subscription-manager repos --enable=cert-1-for-rhel-9-x86_64-rpms || ( echo "❌ Attaching certification repo failed, please run script again."; exit $ERRCODE )
-    subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-rpms || ( echo "❌ Attaching baseos repo failed, please run script again."; exit $ERRCODE )
-    subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-rpms || ( echo "❌ Attaching appstream repo failed, please run script again."; exit $ERRCODE )
-    subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-debug-rpms || ( echo "❌ Attaching baseos debug repo failed, please run script again."; exit $ERRCODE )
-    subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-debug-rpms || ( echo "❌ Attaching appstream debug repo failed, please run script again."; exit $ERRCODE )
-  fi
+    if [ $VERSION == "8" ]; then
+        subscription-manager repos --enable=cert-1-for-rhel-8-x86_64-rpms || ( echo "❌ Attaching certification repo failed, please runs script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-rpms || ( echo "❌ Attaching baseos repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-rpms || ( echo "❌ Attaching appstream failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-debug-rpms || ( echo "❌ Attaching baseos debug repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-debug-rpms || ( echo "❌ Attaching appstream debug failed, please run script again."; exit $ERRCODE )
+    else
+        subscription-manager repos --enable=cert-1-for-rhel-9-x86_64-rpms || ( echo "❌ Attaching certification repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-rpms || ( echo "❌ Attaching baseos repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-rpms || ( echo "❌ Attaching appstream repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-debug-rpms || ( echo "❌ Attaching baseos debug repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-debug-rpms || ( echo "❌ Attaching appstream debug repo failed, please run script again."; exit $ERRCODE )
+    fi
 
 
-  # Install the certification software on Clinet & Server
-  subscription-manager attach --auto
-  echo
-  echo "------------------------------------"
-  echo "INSTALLING CERTIFICATION SOFTWARE..."
-  echo "------------------------------------"
-  echo
-  dnf install -y redhat-certification && dnf install -y redhat-certification-hardware --allowerasing || ( echo "❌ Installing hardware test suite package failed!" )
-
-  # Install the Cockpit on Server only
-  if [[ "$TYPE" == [Ss] ]]; then
+    # Install the certification software on Clinet & Server
+    subscription-manager attach --auto
     echo
-    echo "-----------------------------------"
-    echo "INSTALLING COCKPIT RPM ON SERVER..."
-    echo "-----------------------------------"
+    echo "------------------------------------"
+    echo "INSTALLING CERTIFICATION SOFTWARE..."
+    echo "------------------------------------"
     echo
-    dnf install -y redhat-certification-cockpit || ( echo "❌ Installing Cockpit RPM failed!" )
-  fi
+    dnf install -y redhat-certification && dnf install -y redhat-certification-hardware --allowerasing || ( echo "❌ Installing hardware test suite package failed!" )
+
+    # Install the Cockpit on Server only
+    if [[ "$TYPE" == [Ss] ]]; then
+        echo
+        echo "-----------------------------------"
+        echo "INSTALLING COCKPIT RPM ON SERVER..."
+        echo "-----------------------------------"
+        echo
+        dnf install -y redhat-certification-cockpit || ( echo "❌ Installing Cockpit RPM failed!" )
+    fi
 
 
-  # Install GA kernel 
-  echo
-  echo "---------------------------------"
-  echo "ENSURING PROPER KERNEL VERSION..."
-  echo "---------------------------------"
-  echo
-  RELEASE=$(cat /etc/redhat-release | cut -d ' ' -f6)
-  KERNEL=$(uname -r)
-  case $VERSION in
+    # Install GA kernel 
+    echo
+    echo "---------------------------------"
+    echo "ENSURING PROPER KERNEL VERSION..."
+    echo "---------------------------------"
+    echo
+    RELEASE=$(cat /etc/redhat-release | cut -d ' ' -f6)
+    KERNEL=$(uname -r)
+    case $VERSION in
     "8")
-      if [[ "$RELEASE" == "8.8" && "$KERNEL" != "4.18.0-477.10.1.el8_8.x86_64" ]]; then 
-        dnf remove -y kernel kernel-debug kernel-debuginfo
-        dnf install -y kernel-4.18.0-477.10.1.el8_8 kernel-debug-4.18.0-477.10.1.el8_8 kernel-debuginfo-4.18.0-477.10.1.el8_8 --skip-broken
-      fi
-      if [[ "$RELEASE" == "8.9" && "$KERNEL" != "4.18.0-513.5.1.el8_9.x86_64" ]]; then 
-        dnf remove -y kernel kernel-debug kernel-debuginfo
-        dnf install -y kernel-4.18.0-513.5.1.el8_9 kernel-debug-4.18.0-513.5.1.el8_9 kernel-debuginfo-4.18.0-513.5.1.el8_9 --skip-broken
-      fi
-	  if [[ "$RELEASE" == "8.10" && "$KERNEL" != "4.18.0-553.el8_10.x86_64" ]]; then 
-        dnf remove -y kernel kernel-debug kernel-debuginfo
-        dnf install -y kernel-4.18.0-553.el8_10 kernel-debug-4.18.0-553.el8_10 kernel-debuginfo-4.18.0-553.el8_10 --skip-broken
-      fi
-      ;;
+        if [[ "$RELEASE" == "8.8" && "$KERNEL" != "4.18.0-477.10.1.el8_8.x86_64" ]]; then 
+            dnf remove -y kernel kernel-debug kernel-debuginfo
+            dnf install -y kernel-4.18.0-477.10.1.el8_8 kernel-debug-4.18.0-477.10.1.el8_8 kernel-debuginfo-4.18.0-477.10.1.el8_8 --skip-broken
+        fi
+        if [[ "$RELEASE" == "8.9" && "$KERNEL" != "4.18.0-513.5.1.el8_9.x86_64" ]]; then 
+            dnf remove -y kernel kernel-debug kernel-debuginfo
+            dnf install -y kernel-4.18.0-513.5.1.el8_9 kernel-debug-4.18.0-513.5.1.el8_9 kernel-debuginfo-4.18.0-513.5.1.el8_9 --skip-broken
+        fi
+	    if [[ "$RELEASE" == "8.10" && "$KERNEL" != "4.18.0-553.el8_10.x86_64" ]]; then 
+            dnf remove -y kernel kernel-debug kernel-debuginfo
+            dnf install -y kernel-4.18.0-553.el8_10 kernel-debug-4.18.0-553.el8_10 kernel-debuginfo-4.18.0-553.el8_10 --skip-broken
+        fi
+        ;;
     "9")
-      if [[ "$RELEASE" == "9.2" && "$KERNEL" != "5.14.0-284.11.1.el9_2.x86_64" ]]; then 
-        dnf remove -y kernel kernel-debug kernel-debuginfo
-        dnf install -y kernel-5.14.0-284.11.1.el9_2 kernel-debug-5.14.0-284.11.1.el9_2 kernel-debuginfo-5.14.0-284.11.1.el9_2 --skip-broken
-      fi
-      if [[ "$RELEASE" == "9.3" && "$KERNEL" != "5.14.0-362.8.1.el9_3.x86_64" ]]; then
-        dnf remove -y kernel kernel-debug kernel-debuginfo
-        dnf install -y kernel-5.14.0-362.8.1.el9_3 kernel-debug-5.14.0-362.8.1.el9_3 kernel-debuginfo-5.14.0-362.8.1.el9_3 --skip-broken
-      fi
-      if [[ "$RELEASE" == "9.4" && "$KERNEL" != "5.14.0-427.13.1.el9_4.x86_64" ]]; then
-        dnf remove -y kernel kernel-debug kernel-debuginfo
-        dnf install -y kernel-5.14.0-427.13.1.el9_4 kernel-debug-5.14.0-427.13.1.el9_4 kernel-debuginfo-5.14.0-427.13.1.el9_4 --skip-broken
-      fi
-      ;;
+        if [[ "$RELEASE" == "9.2" && "$KERNEL" != "5.14.0-284.11.1.el9_2.x86_64" ]]; then 
+            dnf remove -y kernel kernel-debug kernel-debuginfo
+            dnf install -y kernel-5.14.0-284.11.1.el9_2 kernel-debug-5.14.0-284.11.1.el9_2 kernel-debuginfo-5.14.0-284.11.1.el9_2 --skip-broken
+        fi
+        if [[ "$RELEASE" == "9.3" && "$KERNEL" != "5.14.0-362.8.1.el9_3.x86_64" ]]; then
+            dnf remove -y kernel kernel-debug kernel-debuginfo
+            dnf install -y kernel-5.14.0-362.8.1.el9_3 kernel-debug-5.14.0-362.8.1.el9_3 kernel-debuginfo-5.14.0-362.8.1.el9_3 --skip-broken
+        fi
+        if [[ "$RELEASE" == "9.4" && "$KERNEL" != "5.14.0-427.13.1.el9_4.x86_64" ]]; then
+            dnf remove -y kernel kernel-debug kernel-debuginfo
+            dnf install -y kernel-5.14.0-427.13.1.el9_4 kernel-debug-5.14.0-427.13.1.el9_4 kernel-debuginfo-5.14.0-427.13.1.el9_4 --skip-broken
+        fi
+        ;;
   esac
 
 
-  # Enable the cockpit.socket on Server
-  if [[ "$TYPE" == [Ss] ]]; then
+    # Enable the cockpit.socket on Server
+    if [[ "$TYPE" == [Ss] ]]; then
+        echo
+        echo "--------------------------"
+        echo "ENABLING COCKPIT SOCKET..."
+        echo "--------------------------"
+        echo
+        systemctl enable --now cockpit.socket || ( echo "❌ Enabling cockpit socket failed" )
+        systemctl start cockpit || ( echo "❌ Starting Cockpit failed" )
+
+        # Disable close lid suspend on Server
+        sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/' /etc/systemd/logind.conf && systemctl restart systemd-logind.service
+    fi
+
+
+    # Update system except for the kernel
     echo
-    echo "--------------------------"
-    echo "ENABLING COCKPIT SOCKET..."
-    echo "--------------------------"
+    echo "------------------------------"
+    echo "UPDATING THE LATEST PACKAGE..."
+    echo "------------------------------"
     echo
-    systemctl enable --now cockpit.socket || ( echo "❌ Enabling cockpit socket failed" )
-    systemctl start cockpit || ( echo "❌ Starting Cockpit failed" )
-
-  # Disable close lid suspend on Server
-  sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/' /etc/systemd/logind.conf && systemctl restart systemd-logind.service
-  fi
-
-
-  # Update system except for the kernel
-  echo
-  echo "------------------------------"
-  echo "UPDATING THE LATEST PACKAGE..."
-  echo "------------------------------"
-  echo
-  dnf update -y --exclude=kernel* || ( echo "❌ Updating system failed" && sleep 5 && exit 0 )
+    dnf update -y --exclude=kernel* || ( echo "❌ Updating system failed" && sleep 5 && exit 0 )
   
   
-  # Disable automatic software updates
-  systemctl stop packagekit
-  systemctl mask packagekit
+    # Disable automatic software updates
+    systemctl stop packagekit
+    systemctl mask packagekit
   
   
-  echo
-  echo "--------------------------------------"
-  echo "✅ RHEL CERTIFICATION SETUP COMPLETED"
-  echo "---------------------------------------"
-  echo
-  echo "System will automatically reboot after 8 seconds..."
-  echo
-  for n in {8..1}s; do printf "\r$n"; sleep 1; done
-  echo
-  reboot now
-
+    echo
+    echo "--------------------------------------"
+    echo "✅ RHEL CERTIFICATION SETUP COMPLETED"
+    echo "---------------------------------------"
+    echo
+    echo "System will automatically reboot after 8 seconds..."
+    echo
+    for n in {8..1}s; do printf "\r$n"; sleep 1; done
+    echo
+    reboot now
 fi
 
 exit
