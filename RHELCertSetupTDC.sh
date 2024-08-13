@@ -2,7 +2,7 @@
 
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 2024/07/03
+# CHANGE DATE: 2024/08/13
 __version__="1.5"
 
 
@@ -119,9 +119,9 @@ else
   
   
     # Get RHEL version
-    VERSION=`cat /etc/os-release | grep ^VERSION_ID= | awk -F= '{print $2}' | cut -d '"' -f2 | cut -d '.' -f1`
+    OS_VERSION=`cat /etc/os-release | grep ^VERSION_ID= | awk -F= '{print $2}' | cut -d '"' -f2 | cut -d '.' -f1`
     echo "╭─────────────────────────────────────────────────────────╮"
-    echo "│    RHEL $VERSION System Certification Test Environment Setup   │"
+    echo "│    RHEL $OS_VERSION System Certification Test Environment Setup   │"
     echo "╰─────────────────────────────────────────────────────────╯"
     # Get system type from user
     echo "Are you setting up a client or server?"
@@ -143,7 +143,7 @@ else
     POOL_ID=`subscription-manager list --available | sed -n '{/500 Nodes/, /Subscription Name/ p}' | head -n -1 | grep "Pool ID:" | rev | cut -d ' ' -f1 | rev`
   subscription-manager attach --pool=$POOL_ID
 
-    if [ $VERSION == "8" ]; then
+    if [ $OS_VERSION == "8" ]; then
         subscription-manager repos --enable=cert-1-for-rhel-8-x86_64-rpms || ( echo "❌ Attaching certification repo failed, please runs script again."; exit $ERRCODE )
         subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-rpms || ( echo "❌ Attaching baseos repo failed, please run script again."; exit $ERRCODE )
         subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-rpms || ( echo "❌ Attaching appstream failed, please run script again."; exit $ERRCODE )
@@ -186,30 +186,14 @@ else
     echo
     RELEASE=$(cat /etc/redhat-release | cut -d ' ' -f6)
     KERNEL=$(uname -r)
-    case $VERSION in
+    case $OS_VERSION in
     "8")
-        if [[ "$RELEASE" == "8.8" && "$KERNEL" != "4.18.0-477.10.1.el8_8.x86_64" ]]; then 
-            dnf remove -y kernel kernel-debug kernel-debuginfo
-            dnf install -y kernel-4.18.0-477.10.1.el8_8 kernel-debug-4.18.0-477.10.1.el8_8 kernel-debuginfo-4.18.0-477.10.1.el8_8 --skip-broken
-        fi
-        if [[ "$RELEASE" == "8.9" && "$KERNEL" != "4.18.0-513.5.1.el8_9.x86_64" ]]; then 
-            dnf remove -y kernel kernel-debug kernel-debuginfo
-            dnf install -y kernel-4.18.0-513.5.1.el8_9 kernel-debug-4.18.0-513.5.1.el8_9 kernel-debuginfo-4.18.0-513.5.1.el8_9 --skip-broken
-        fi
 	    if [[ "$RELEASE" == "8.10" && "$KERNEL" != "4.18.0-553.el8_10.x86_64" ]]; then 
             dnf remove -y kernel kernel-debug kernel-debuginfo
             dnf install -y kernel-4.18.0-553.el8_10 kernel-debug-4.18.0-553.el8_10 kernel-debuginfo-4.18.0-553.el8_10 --skip-broken
         fi
         ;;
     "9")
-        if [[ "$RELEASE" == "9.2" && "$KERNEL" != "5.14.0-284.11.1.el9_2.x86_64" ]]; then 
-            dnf remove -y kernel kernel-debug kernel-debuginfo
-            dnf install -y kernel-5.14.0-284.11.1.el9_2 kernel-debug-5.14.0-284.11.1.el9_2 kernel-debuginfo-5.14.0-284.11.1.el9_2 --skip-broken
-        fi
-        if [[ "$RELEASE" == "9.3" && "$KERNEL" != "5.14.0-362.8.1.el9_3.x86_64" ]]; then
-            dnf remove -y kernel kernel-debug kernel-debuginfo
-            dnf install -y kernel-5.14.0-362.8.1.el9_3 kernel-debug-5.14.0-362.8.1.el9_3 kernel-debuginfo-5.14.0-362.8.1.el9_3 --skip-broken
-        fi
         if [[ "$RELEASE" == "9.4" && "$KERNEL" != "5.14.0-427.13.1.el9_4.x86_64" ]]; then
             dnf remove -y kernel kernel-debug kernel-debuginfo
             dnf install -y kernel-5.14.0-427.13.1.el9_4 kernel-debug-5.14.0-427.13.1.el9_4 kernel-debuginfo-5.14.0-427.13.1.el9_4 --skip-broken
