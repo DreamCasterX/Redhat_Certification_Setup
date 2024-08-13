@@ -199,7 +199,7 @@ else
             dnf install -y kernel-5.14.0-427.13.1.el9_4 kernel-debug-5.14.0-427.13.1.el9_4 kernel-debuginfo-5.14.0-427.13.1.el9_4 --skip-broken
         fi
         ;;
-  esac
+    esac
 
 
     # Enable the cockpit.socket on Server
