@@ -126,7 +126,7 @@ else
   
     # Get system type from user
     echo "╭─────────────────────────────────────────────────────────╮"
-    echo "│    RHEL $OS_VERSION System Certification Test Environment Setup   │"
+    echo "│    RHEL $OS_VERSION System Certification Test Environment Setup  │"
     echo "╰─────────────────────────────────────────────────────────╯"
     echo "Are you setting up a client or server?"
     read -p "(c)Client  (s)Server: " TYPE
