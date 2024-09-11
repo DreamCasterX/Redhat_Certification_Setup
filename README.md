@@ -2,7 +2,7 @@
 
 #### [Release Note]
 1.	Customized for HP TDC QA team, including hotkey/disable auto-suspend/collect test log..,etc
-2.	Support RHEL 8.x & 9.x
+2.	Support RHEL 8.x/9.x/10
 3.	Auto update new versions from the remote repository
 
 
@@ -14,10 +14,7 @@
   +  Root account => Allow SSH login
   +  User account => Enable administrator access
   +  Ensure kdump is enabled
-
-+ Connect to Internet and register with Red-Hat partner account
-
 + Set Software Selection to "Workstation"
-
++ Connect to Internet and register with Red-Hat partner account (Optional)
 #####  2).  Boot to OS 
-+ Assign IPs to HUT & SUT. Make sure you can ping HUT <-> SUT successfully
++ Assign an IP to HUT & SUT. Make sure you can ping HUT <-> SUT successfully
