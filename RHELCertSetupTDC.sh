@@ -2,8 +2,8 @@
 
 
 # CREATOR: mike.lu@hp.com
-# CHANGE DATE: 2024/08/13
-__version__="1.5"
+# CHANGE DATE: 2024/09/11
+__version__="1.6"
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
@@ -15,21 +15,24 @@ __version__="1.5"
 #         - Root account : Allow SSH login
 #         - User account : Enable administrator access
 #         - Ensure kdump is enabled
-#    b) Connect to Internet and register with Red-Hat partner account 
-#    c) Set Software Selection to "Workstation" 
+#    b) Set Software Selection to "Workstation"
+#    c) Connect to Internet and register with Red-Hat partner account (optional)
 # 2) Boot to OS 
-#    a) Assign a static IP to HUT & SUT. Make sure you can ping HUT <-> SUT successfully
+#    a) Assign an IP to HUT & SUT. Make sure you can ping HUT <-> SUT successfully
 
 
 # Ensure the user is running the script as root
 if [ "$EUID" -ne 0 ]; then 
 
     # Copy test result file to USB drive (Run as User)
-    XmlLog=`sudo ls -t /var/rhcert/save/*xml | head -1`
-    XmlLogName=`sudo ls -t /var/rhcert/save/*xml | head -1 | cut -d "/" -f5`
-    USBDrive=/run/media/$USERNAME/`ls /run/media/$USERNAME`
-    [[ -d /var/rhcert/save ]] && sudo cp $XmlLog $USBDrive 2> /dev/null && echo -e "💾 $XmlLogName has been captured\n"
+    if [[ -d /var/rhcert/save ]]; then 
+        XmlLog=`sudo ls -t /var/rhcert/save/*xml | head -1`
+        XmlLogName=`sudo ls -t /var/rhcert/save/*xml | head -1 | cut -d "/" -f5`
+        USBDrive=/run/media/$USERNAME/`ls /run/media/$USERNAME`
+        sudo cp $XmlLog $USBDrive 2> /dev/null && echo -e "💾 $XmlLogName has been captured\n"
+    fi
     echo "⚠️ Please run as root (sudo su) to start the installation."
+
 else
 
     # Customize keyboard shortcut
@@ -122,11 +125,11 @@ else
         REPOS=$(awk '/^\[/ {gsub(/[\[\]]/, "", $0); printf("--repo %s ", $0)}'  /etc/yum.repos.d/redhat.repo)
         sudo subscription-manager repo-override --add sslverifystatus:0 $REPOS   # Revert: sudo subscription-manager repo-override --remove-all
     fi
-  
+    
   
     # Get system type from user
     echo "╭─────────────────────────────────────────────────────────╮"
-    echo "│    RHEL $OS_VERSION System Certification Test Environment Setup  │"
+    [[ $OS_VERSION == [89] ]] && echo "│    RHEL $OS_VERSION System Certification Test Environment Setup   │" || echo "│    RHEL $OS_VERSION System Certification Test Environment Setup  │"
     echo "╰─────────────────────────────────────────────────────────╯"
     echo "Are you setting up a client or server?"
     read -p "(c)Client  (s)Server: " TYPE
@@ -136,7 +139,19 @@ else
       read -p "(c)Client  (s)Server: " TYPE
     done
 
-
+  
+    # Check system registration status
+    if ! subscription-manager list | grep -i 'subscribed' > /dev/null; then
+        echo
+        echo "----------------------"
+        echo "REGISTERING  SYSTEM..."
+        echo "----------------------"
+        echo
+        ! subscription-manager register && exit 0
+        subscription-manager refresh
+    fi
+        
+    
     # Attach the Red Hat Enterprise Linux Self-Serve Subscription
     echo
     echo "--------------------------------------"
@@ -145,7 +160,7 @@ else
     echo
     # Get Pool ID
     POOL_ID=`subscription-manager list --available | sed -n '{/500 Nodes/, /Subscription Name/ p}' | head -n -1 | grep "Pool ID:" | rev | cut -d ' ' -f1 | rev`
-  subscription-manager attach --pool=$POOL_ID
+    subscription-manager attach --pool=$POOL_ID
 
     if [[ $OS_VERSION == "8" ]]; then
         subscription-manager repos --enable=cert-1-for-rhel-8-x86_64-rpms || ( echo "❌ Attaching certification repo failed, please runs script again."; exit $ERRCODE )
