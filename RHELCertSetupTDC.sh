@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 
-# CREATOR: mike.lu@hp.com
-# CHANGE DATE: 2024/09/11
-__version__="1.6"
+# CREATOR: Mike Lu
+# CHANGE DATE: 2024/11/04
+__version__="1.7"
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
@@ -91,31 +91,6 @@ else
     nslookup "hp.com" > /dev/null
     if [ $? != 0 ]; then 
         echo "❌ No Internet connection! Please check your network" && sleep 5 && exit 0
-    fi
-
-
-    # Check the latest update of this script
-    release_url=https://api.github.com/repos/DreamCasterX/Redhat_Certification_Setup/releases/latest
-    new_version=$(curl -s "${release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
-    release_note=$(curl -s "${release_url}" | grep '"body":' | awk -F\" '{print $4}')
-    tarball_url="https://github.com/DreamCasterX/Redhat_Certification_Setup/archive/refs/tags/${new_version}.tar.gz"
-    if [[ $new_version != $__version__ ]]; then
-        echo -e "⭐️ New version found!\n\nVersion: $new_version\nRelease note:\n$release_note"
-        sleep 2
-        echo -e "\nDownloading update..."
-        pushd "$PWD" > /dev/null 2>&1
-        curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".RHELCertSetupTDC.tar.gz" "${tarball_url}"
-        if [[ -e ".RHELCertSetupTDC.tar.gz" ]]; then
-	        tar -xf .RHELCertSetupTDC.tar.gz -C "$PWD" --strip-components 1 > /dev/null 2>&1
-	        rm -f .RHELCertSetupTDC.tar.gz
-            rm -f README.md
-            popd > /dev/null 2>&1
-            sleep 3
-            sudo chmod 755 RHELCertSetupTDC.sh
-            echo -e "Successfully updated! Please run RHELCertSetupTDC.sh again.\n\n" ; exit 1
-        else
-            echo -e "\n❌ Error occured while downloading" ; exit 1
-        fi 
     fi
 
 
