@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 
-# CREATOR: Mike Lu
-# CHANGE DATE: 2024/11/04
+# CREATOR: mike.lu@hp.com
+# CHANGE DATE: 2024/11/06
 __version__="1.7"
 
 
@@ -15,10 +15,10 @@ __version__="1.7"
 #         - Root account : Allow SSH login
 #         - User account : Enable administrator access
 #         - Ensure kdump is enabled
-#    b) Set Software Selection to "Workstation"
-#    c) Connect to Internet and register with Red-Hat partner account (optional)
+#    b) Connect to Internet and register with Red-Hat partner account 
+#    c) Set Software Selection to "Workstation" 
 # 2) Boot to OS 
-#    a) Assign an IP to HUT & SUT. Make sure you can ping HUT <-> SUT successfully
+#    a) Assign a static IP to HUT & SUT. Make sure you can ping HUT <-> SUT successfully
 
 
 # Ensure the user is running the script as root
@@ -65,11 +65,6 @@ else
     sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.system.proxy mode 'auto' 2> /dev/null
 
 
-    # Disable automatic DNS (Optional)
-    # NIC=`nmcli -t -f DEVICE c s -a | grep -v 'lo' | grep -v 'wl' | grep -v 'virbr0'`
-    # nmcli connection modify $NIC ipv4.ignore-auto-dns 'yes'
-
-
     # Disable auto suspend/dim screen/screen blank/auto power-saver
     sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type "nothing" 2> /dev/null
     sudo -H -u $USERNAME DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$ID/bus gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type "nothing" 2> /dev/null
@@ -91,6 +86,31 @@ else
     nslookup "hp.com" > /dev/null
     if [ $? != 0 ]; then 
         echo "❌ No Internet connection! Please check your network" && sleep 5 && exit 0
+    fi
+
+
+    # Check the latest update of this script
+    release_url=https://api.github.com/repos/DreamCasterX/Redhat_Certification_Setup/releases/latest
+    new_version=$(curl -s "${release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
+    release_note=$(curl -s "${release_url}" | grep '"body":' | awk -F\" '{print $4}')
+    tarball_url="https://github.com/DreamCasterX/Redhat_Certification_Setup/archive/refs/tags/${new_version}.tar.gz"
+    if [[ $new_version != $__version__ ]]; then
+        echo -e "⭐️ New version found!\n\nVersion: $new_version\nRelease note:\n$release_note"
+        sleep 2
+        echo -e "\nDownloading update..."
+        pushd "$PWD" > /dev/null 2>&1
+        curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".RHELCertSetupTDC.tar.gz" "${tarball_url}"
+        if [[ -e ".RHELCertSetupTDC.tar.gz" ]]; then
+	        tar -xf .RHELCertSetupTDC.tar.gz -C "$PWD" --strip-components 1 > /dev/null 2>&1
+	        rm -f .RHELCertSetupTDC.tar.gz
+            rm -f README.md
+            popd > /dev/null 2>&1
+            sleep 3
+            sudo chmod 755 RHELCertSetupTDC.sh
+            echo -e "Successfully updated! Please run RHELCertSetupTDC.sh again.\n\n" ; exit 1
+        else
+            echo -e "\n❌ Error occurred while downloading" ; exit 1
+        fi 
     fi
 
 
@@ -116,44 +136,39 @@ else
 
   
     # Check system registration status
-    if ! subscription-manager list | grep -i 'subscribed' > /dev/null; then
+    if rhc status | grep -w 'Not connected' > /dev/null; then
         echo
         echo "----------------------"
         echo "REGISTERING  SYSTEM..."
         echo "----------------------"
         echo
-        ! subscription-manager register && exit 0
+        ! rhc connect && exit 0
         subscription-manager refresh
     fi
         
     
-    # Attach the Red Hat Enterprise Linux Self-Serve Subscription
+    # Enable the Red Hat Enterprise Linux Repositories
     echo
-    echo "--------------------------------------"
-    echo "ATTACHING CORRECT RHEL SUBSCRIPTION..."
-    echo "--------------------------------------"
+    echo "-----------------"
+    echo "ENABLING REPOS..."
+    echo "-----------------"
     echo
-    # Get Pool ID
-    POOL_ID=`subscription-manager list --available | sed -n '{/500 Nodes/, /Subscription Name/ p}' | head -n -1 | grep "Pool ID:" | rev | cut -d ' ' -f1 | rev`
-    subscription-manager attach --pool=$POOL_ID
-
     if [[ $OS_VERSION == "8" ]]; then
-        subscription-manager repos --enable=cert-1-for-rhel-8-x86_64-rpms || ( echo "❌ Attaching certification repo failed, please runs script again."; exit $ERRCODE )
-        subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-rpms || ( echo "❌ Attaching baseos repo failed, please run script again."; exit $ERRCODE )
-        subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-rpms || ( echo "❌ Attaching appstream failed, please run script again."; exit $ERRCODE )
-        subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-debug-rpms || ( echo "❌ Attaching baseos debug repo failed, please run script again."; exit $ERRCODE )
-        subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-debug-rpms || ( echo "❌ Attaching appstream debug failed, please run script again."; exit $ERRCODE )
-    else
-        subscription-manager repos --enable=cert-1-for-rhel-9-x86_64-rpms || ( echo "❌ Attaching certification repo failed, please run script again."; exit $ERRCODE )
-        subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-rpms || ( echo "❌ Attaching baseos repo failed, please run script again."; exit $ERRCODE )
-        subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-rpms || ( echo "❌ Attaching appstream repo failed, please run script again."; exit $ERRCODE )
-        subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-debug-rpms || ( echo "❌ Attaching baseos debug repo failed, please run script again."; exit $ERRCODE )
-        subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-debug-rpms || ( echo "❌ Attaching appstream debug repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=cert-1-for-rhel-8-x86_64-rpms || ( echo "❌ Enabling certification repo failed, please runs script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-rpms || ( echo "❌ Enabling baseos repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-rpms || ( echo "❌ Enabling appstream failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-8-for-$(uname -m)-baseos-debug-rpms || ( echo "❌ Enabling baseos debug repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-8-for-$(uname -m)-appstream-debug-rpms || ( echo "❌ Enabling appstream debug failed, please run script again."; exit $ERRCODE )
+    elif [[ $OS_VERSION == "9" ]]; then
+        subscription-manager repos --enable=cert-1-for-rhel-9-x86_64-rpms || ( echo "❌ Enabling certification repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-rpms || ( echo "❌ Enabling baseos repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-rpms || ( echo "❌ Enabling appstream repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-9-for-$(uname -m)-baseos-debug-rpms || ( echo "❌ Enabling baseos debug repo failed, please run script again."; exit $ERRCODE )
+        subscription-manager repos --enable=rhel-9-for-$(uname -m)-appstream-debug-rpms || ( echo "❌ Enabling appstream debug repo failed, please run script again."; exit $ERRCODE )
     fi
 
 
-    # Install the certification software on Clinet & Server
-    subscription-manager attach --auto
+    # Install the certification software on Client & Server
     echo
     echo "------------------------------------"
     echo "INSTALLING CERTIFICATION SOFTWARE..."
