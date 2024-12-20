@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 
-# CREATOR: mike.lu@hp.com
-# CHANGE DATE: 2024/11/06
-__version__="1.7"
+# CREATOR: Mike Lu
+# CHANGE DATE: 2024/12/20
+__version__="1.8"
 
 
 # Red Hat Enterprise Linux Hardware Certification Test Environment Setup Script
@@ -86,31 +86,6 @@ else
     nslookup "hp.com" > /dev/null
     if [ $? != 0 ]; then 
         echo "❌ No Internet connection! Please check your network" && sleep 5 && exit 0
-    fi
-
-
-    # Check the latest update of this script
-    release_url=https://api.github.com/repos/DreamCasterX/Redhat_Certification_Setup/releases/latest
-    new_version=$(curl -s "${release_url}" | grep '"tag_name":' | awk -F\" '{print $4}')
-    release_note=$(curl -s "${release_url}" | grep '"body":' | awk -F\" '{print $4}')
-    tarball_url="https://github.com/DreamCasterX/Redhat_Certification_Setup/archive/refs/tags/${new_version}.tar.gz"
-    if [[ $new_version != $__version__ ]]; then
-        echo -e "⭐️ New version found!\n\nVersion: $new_version\nRelease note:\n$release_note"
-        sleep 2
-        echo -e "\nDownloading update..."
-        pushd "$PWD" > /dev/null 2>&1
-        curl --silent --insecure --fail --retry-connrefused --retry 3 --retry-delay 2 --location --output ".RHELCertSetupTDC.tar.gz" "${tarball_url}"
-        if [[ -e ".RHELCertSetupTDC.tar.gz" ]]; then
-	        tar -xf .RHELCertSetupTDC.tar.gz -C "$PWD" --strip-components 1 > /dev/null 2>&1
-	        rm -f .RHELCertSetupTDC.tar.gz
-            rm -f README.md
-            popd > /dev/null 2>&1
-            sleep 3
-            sudo chmod 755 RHELCertSetupTDC.sh
-            echo -e "Successfully updated! Please run RHELCertSetupTDC.sh again.\n\n" ; exit 1
-        else
-            echo -e "\n❌ Error occurred while downloading" ; exit 1
-        fi 
     fi
 
 
@@ -206,6 +181,9 @@ else
         if [[ "$RELEASE" == "9.4" && "$KERNEL" != "5.14.0-427.13.1.el9_4.x86_64" ]]; then
             dnf remove -y kernel kernel-debug kernel-debuginfo
             dnf install -y kernel-5.14.0-427.13.1.el9_4 kernel-debug-5.14.0-427.13.1.el9_4 kernel-debuginfo-5.14.0-427.13.1.el9_4 --skip-broken
+		elif [[ "$RELEASE" == "9.5" && "$KERNEL" != "5.14.0-503.11.1.el9_5.x86_64" ]]; then
+            dnf remove -y kernel kernel-debug kernel-debuginfo
+            dnf install -y kernel-5.14.0-503.11.1.el9_5 kernel-debug-5.14.0-503.11.1.el9_5 kernel-debuginfo-5.14.0-503.11.1.el9_5 --skip-broken
         fi
         ;;
     esac
